@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js"></script>
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <h1 class="h3 mb-0 text-gray-800">Your Profile</h1>
+</div>
+
+<div class="row">
+
+  <!-- Earnings (Monthly) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                          Nova Rapport</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><a href="https://etjanster.polisen.se/enova/" target="_blank">Raport</a></div>
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Earnings (Annual) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                          Your Next shift</div>
+                          {% for booked_workshift in profile.booked_workshifts.all %}
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ booked_workshift.name }}</div>
+                      {% endfor %}
+                  </div>
+                  <div class="col-auto">
+                      <i class="fa-solid fa-handcuffs fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+<!-- Next Work Date Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+  <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+          <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Next Work Date</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                      {% if booked_workshifts %}
+                          {% with booked_workshifts.0.start_time as next_work_date %}
+                              {{ next_work_date|date:"d F, Y" }}
+                          {% endwith %}
+                      {% else %}
+                          No upcoming work date
+                      {% endif %}
+                  </div>
+              </div>
+              <div class="col-auto">
+                  <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Pending Requests Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                          Your work title</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ profile.work_title }}</div>
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-comments fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Profile -->
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Profile details</h6>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Username:</strong> {{ profile.user.username }}</p>
+        <p><strong>First Name:</strong> {{ profile.user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ profile.user.last_name }}</p>
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+        <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+        <p><strong>Address:</strong> {{ profile.address }}</p>
+        <p><strong>About Me:</strong> {{ profile.about_me }}</p>
+        <a href="{% url 'profiles:edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+      </div>      
+      <div class="col-md-6">
+        <div class="text-center">
+          {% if profile.profile_image %}
+            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="max-width: 200px;" src="{{ profile.profile_image.url }}" alt="Profile Image">
+          {% else %}
+            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="max-width: 200px;" src="{% static 'profile_image.jpeg' %}" alt="Default Profile Image">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-body"></div>
+<div class="calendar-heading">
+<h2>Your Calendar</h2>
+</div>
+<div id="profile_calendar"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('profile_calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    events: [
+      {% for booked_workshift in profile.booked_workshifts.all %}
+        {
+          title: '{{ booked_workshift.name }}',
+          start: '{{ booked_workshift.start_time|date:"Y-m-d" }}',
+          end: '{{ booked_workshift.end_time|date:"Y-m-d" }}'
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  });
+  calendar.render();
+});
+</script>
+
+  
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-text p {
+      margin-bottom: 10px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .calendar-heading {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      }
+
+    #profile_calendar {
+    max-width: 600px; /* Adjust the width as needed */
+    margin: 0 auto;
+  }
+  </style>
+
+{% endblock %}

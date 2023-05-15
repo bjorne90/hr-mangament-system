@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div id="calendar"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        events: [
+          {% for shift in shifts %}
+            {
+              title: '{{ shift.name }}',
+              start: '{{ shift.start_time|date:"Y-m-d H:i:s" }}',
+              end: '{{ shift.end_time|date:"Y-m-d H:i:s" }}',
+              url: '{% url 'scheduling:book_workshift' %}'  // Update the URL here
+            },
+          {% endfor %}
+        ],
+        eventClick: function(info) {
+          window.location.href = info.event.url;
+        },
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+{% endblock %}

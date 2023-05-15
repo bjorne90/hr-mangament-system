@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+<script src="https://cdn.emailjs.net/sdk/2.6.4/email.min.js"></script>
+{% load static %}
+
+{% block content %}
+  <h1>Available Workshifts</h1>
+  {% if workshifts %}
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Start Date</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">End Time</th>
+          <th scope="col">Role</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for workshift in workshifts %}
+          <tr>
+            <td id="workshift_name_{{ workshift.id }}">{{ workshift.name }}</td>
+            <td id="workshift_start_date_{{ workshift.id }}">{{ workshift.start_time|date:"Y-m-d" }}</td>
+            <td id="workshift_start_time_{{ workshift.id }}">{{ workshift.start_time|time:"H:i" }}</td>
+            <td id="workshift_end_time_{{ workshift.id }}">{{ workshift.end_time|time:"H:i" }}</td>
+            <td id="workshift_role_{{ workshift.id }}">{{ workshift.role }}</td>
+            <td>
+              <form method="POST" action="{% url 'scheduling:book_workshift' %}">
+                {% csrf_token %}
+                <input type="hidden" name="workshift_id" value="{{ workshift.id }}">
+                <button type="submit" class="btn btn-primary" onclick="sendEmail('{{ workshift.id }}')">
+                  <i class="fas fa-book"></i> Book Shift
+                </button>                
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No available workshifts.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Workshift List</h1>
+  <ul>
+    {% for workshift in workshifts %}
+      <li>
+        <h2>{{ workshift.name }}</h2>
+        <p>Date: {{ workshift.start_time|date:"F d, Y" }}</p>
+        <p>Time: {{ workshift.start_time|time:"h:i A" }} - {{ workshift.end_time|time:"h:i A" }}</p>
+      </li>
+    {% empty %}
+      <li>No workshifts available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

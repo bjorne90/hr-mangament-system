@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>My Booked Workshifts</h1>
+  {% if booked_workshifts %}
+    <ul>
+      {% for workshift in booked_workshifts %}
+        <li>
+          <h2>{{ workshift.name }}</h2>
+          <p>Date: {{ workshift.start_time|date:"F d, Y" }}</p>
+          <p>Time: {{ workshift.start_time|time:"h:i A" }} - {{ workshift.end_time|time:"h:i A" }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No booked workshifts.</p>
+  {% endif %}
+{% endblock %}

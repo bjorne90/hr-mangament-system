@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Book a Pass</h1>
+<form method="post" action="{% url 'booking:book_pass' %}">
+  {% csrf_token %}
+  <label for="place">Place:</label>
+  <input type="text" name="place" required><br>
+  <label for="time">Time:</label>
+  <input type="datetime-local" name="time" required><br>
+  <label for="role">Role:</label>
+  <input type="text" name="role" required><br>
+  <button type="submit">Book Pass</button>
+</form>
+{% endblock %}

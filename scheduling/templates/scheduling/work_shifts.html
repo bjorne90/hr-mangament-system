@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>My Booked Workshifts</h1>
+  {% if booked_workshifts %}
+    <ul class="list-group">
+      {% for workshift in booked_workshifts %}
+        <li class="list-group-item">
+          <h2>{{ workshift.name }}</h2>
+          <p>Date: {{ workshift.start_time|date:"F d, Y" }}</p>
+          <p>Time: {{ workshift.start_time|time:"H:i" }} - {{ workshift.end_time|time:"H:i" }}</p>
+          <a href="{% url 'scheduling:cancel_workshift' workshift_id=workshift.id %}" class="btn btn-danger"><i class="fas fa-times"></i> Cancel Workshift</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No booked workshifts.</p>
+  {% endif %}
+{% endblock %}

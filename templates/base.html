@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>HR System - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link rel="stylesheet" href="{% static 'css/all_style.css' %}">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link rel="stylesheet" href="{% static 'css/admin_style.css' %}">
+  <script src="{% static 'js/email.js' %}"></script>
+  <script src="https://cdn.emailjs.net/sdk/2.6.4/email.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.8.0/main.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.8.0/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/1f28a44c72.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'profiles:profile_detail' %}">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fa-regular fa-face-grin-squint-tears"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">HR System <sup>v2.0</sup></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+<!-- Heading -->
+<div class="sidebar-heading">
+  Menu
+</div>
+
+<!-- Nav Item - Pages Collapse Menu -->
+<li class="nav-item active">
+  <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
+    aria-controls="collapsePages">
+    <i class="fas fa-fw fa-folder"></i>
+    <span>Menu</span>
+  </a>
+  <div id="collapsePages" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      <h6 class="collapse-header">Menu:</h6>
+      {% if user.is_authenticated %}
+      <a class="collapse-item" href="{% url 'profiles:profile_detail' %}">Profile</a>
+      <a class="collapse-item" href="{% url 'scheduling:work_shifts' %}">My Schedule</a>
+      <a class="collapse-item" href="{% url 'scheduling:book_workshift' %}">Book a shift</a>
+      <a class="collapse-item" href="{% url 'scheduling:calendar' %}">Calender</a>
+      <a class="collapse-item" href="{% url 'news:news_feed' %}">News</a>
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      {% if user.is_superuser %}
+      <a class="collapse-item" href="{% url 'admin:index' %}">Adminpanel</a>
+      <a class="collapse-item" href="{% url 'profiles:links' %}">Links</a>
+      <a class="collapse-item" href="{% url 'profiles:employees' %}">Employees</a>
+      {% endif %}
+      <div class="collapse-divider"></div>
+      <h6 class="collapse-header">Settings:</h6>
+      <a class="collapse-item" href="{% url 'authentication:logout' %}">Logout</a>
+      {% else %}
+      <a class="collapse-item active" href="{% url 'home' %}">Home</a>
+      <a class="collapse-item active" href="{% url 'authentication:register' %}">Register</a>
+      <a class="collapse-item active" href="{% url 'authentication:login' %}">Login</a>
+
+      {% endif %}
+    </div>
+  </div>
+</li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+      
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter">{{ num_alerts }}</span>
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  Alerts Center
+                </h6>
+                {% for alert in alerts %}
+                  {% if alert.is_new %}  <!-- Assuming is_new is the flag indicating a new item -->
+                    <a class="dropdown-item d-flex align-items-center new-alert" href="{{ alert.url }}">
+                      <div class="mr-3">
+                        <div class="icon-circle bg-primary">
+                          <i class="{{ alert.icon_class }} text-white"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="small text-gray-500">{{ alert.timestamp }}</div>
+                        <span class="font-weight-bold">{{ alert.message }}</span>
+                      </div>
+                    </a>
+                  {% else %}
+                    <a class="dropdown-item d-flex align-items-center" href="{{ alert.url }}">
+                      <div class="mr-3">
+                        <div class="icon-circle bg-primary">
+                          <i class="{{ alert.icon_class }} text-white"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="small text-gray-500">{{ alert.timestamp }}</div>
+                        <span class="font-weight-bold">{{ alert.message }}</span>
+                      </div>
+                    </a>
+                  {% endif %}
+                {% empty %}
+                  <a class="dropdown-item text-center small text-gray-500" href="#">No new alerts</a>
+                {% endfor %}
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+              </div>
+            </li>
+            
+          
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                {% if user.is_authenticated %}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">You are logged in as: {{ profile.user.first_name }} {{ profile.user.last_name }}</span>
+                <img class="img-profile rounded-circle" src="{% static 'profile_image.jpeg' %}">
+                {% endif %}
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'authentication:logout' %}" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <main class="container">
+          {% block content %}
+          {% endblock %}
+        </main>
+
+        <footer>
+          <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span><p> HR Mangament, Created with <span class="heart">❤️</span> by <a href="https://github.com/bjorne90" target="_blank">Björn Centio 2023</a></p></span>
+                </div>
+            </div>
+        </footer>
+        </footer>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="{% static 'js/jquery.min.js' %}"></script> 
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="{% static 'js/admin.js' %}"></script>
+</body>
+
+</html>

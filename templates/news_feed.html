@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+  <h1 class="mb-4">News Feed</h1>
+  <div class="row">
+    {% for news_item in news_items %}
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="card-title">{{ news_item.title }}</h3>
+            <p class="card-text">{{ news_item.content }}</p>
+            <p class="card-text"><small class="text-muted">Published on: {{ news_item.timestamp }}</small></p>
+          </div>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col">
+                <form action="{% url 'news:like_post' news_item.id %}" method="post" class="d-inline">
+                  {% csrf_token %}
+                  {% if request.user in news_item.likes.all %}
+                    <button type="submit" class="btn btn-sm btn-primary">
+                      <i class="fas fa-heart"></i> Unlike
+                    </button>
+                  {% else %}
+                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                      <i class="far fa-heart"></i> Like
+                    </button>
+                  {% endif %}
+                </form>                               
+                <small class="text-muted">{{ news_item.likes.count }} likes</small>
+              </div>
+              <div class="col text-right">
+                <!-- Remove the comments section -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col">
+        <p>No news items available.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

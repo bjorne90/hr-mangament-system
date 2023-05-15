@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Email content goes here -->
+    <h1>Workshift Booking Confirmation</h1>
+    <p>You have successfully booked the following workshift:</p>
+    <ul>
+        <li>Name: {{ name }}</li>
+        <li>Start Time: {{ start_time }}</li>
+        <li>End Time: {{ end_time }}</li>
+        <li>Role: {{ role }}</li>
+    </ul>
+
+    <!-- Add the EmailJS script tag -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init('{{ EMAILJS_USER_ID }}');
+            const templateParams = {
+                to_email: '{{ email }}',
+                subject: 'Workshift Booking Confirmation',
+                message: document.body.innerHTML,
+            };
+            emailjs.send('{{ EMAILJS_SERVICE_ID }}', '{{ EMAILJS_TEMPLATE_ID }}', templateParams);
+        })();
+    </script>
+{% endblock %}

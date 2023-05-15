@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Book Workshift</h1>
+  <h2>{{ workshift }}</h2>
+  <p>Start Time: {{ workshift.start_time }}</p>
+  <p>End Time: {{ workshift.end_time }}</p>
+  <p>Role: {{ workshift.role }}</p>
+  
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Book Shift</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+  <h2>Useful Links</h2>
+  <table class="table table-bordered">
+    <thead class="thead-light">
+      <tr>
+        <th>Website</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Police Raports</td>
+        <td>
+          <a href="https://etjanster.polisen.se/enova/" target="_blank"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Law for Public Saftey Officers</td>
+        <td>
+          <a href="https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/lag-1980578-om-ordningsvakter_sfs-1980-578" target="_blank"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+        </td>
+      </tr>
+      <tr>
+        <td>First aid</td>
+        <td>
+          <a href="https://www.1177.se/Skane/olyckor--skador/akuta-rad---forsta-hjalpen/" target="_blank"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
